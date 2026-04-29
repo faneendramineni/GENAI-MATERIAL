@@ -35,7 +35,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REPOSITORY: 'langgraph-agent'
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Navigate to the context directory
