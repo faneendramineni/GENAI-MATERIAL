@@ -1,18 +1,29 @@
-from .graph import graph
+from fastapi import FastAPI
+from app.graph import build_graph
 
-def run_travel_planner(payload: dict):
-    config = {"configurable": {"thread_id": payload.get("session_id", "default")}}
-    return graph.invoke(payload, config)
+app = FastAPI()
+graph = build_graph()
 
 
-if __name__ == "__main__":
-    # test run locally
-    result = run_travel_planner({
-        "origin": "Dubai",
-        "destination": "Bangalore",
-        "travel_date_input": "next Friday",
-        "total_budget": 1000,
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+@app.post("/plan")
+def plan_trip(payload: dict):
+    config = {
+        "configurable": {
+            "thread_id": payload.get("session_id", "default")
+        }
+    }
+
+    result = graph.invoke({
+        "origin": payload["origin"],
+        "destination": payload["destination"],
+        "travel_date_input": payload["date"],
+        "total_budget": payload["budget"],
         "messages": []
-    })
+    }, config)
 
-    print(result)
+    return result
