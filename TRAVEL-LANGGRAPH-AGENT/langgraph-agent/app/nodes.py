@@ -8,6 +8,20 @@ from app.config import logger
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
 search_tool = SerpAPIWrapper()
 
+# --- 1. Define the Node ---
+def budget_check_node(state: TravelState):
+    total = state.get("total_budget", 0) or 0
+    flight = state.get("selected_flight_price", 0) or 0
+    hotel = state.get("selected_hotel_price", 0) or 0
+    
+    spent = flight + hotel
+    remaining = total - spent
+    
+    logger.info(f"--- 🧠 BUDGET CHECK: Total ${total} | Spent ${spent} | Remaining ${remaining} ---")
+    
+    # Returning this dict updates the LangGraph state automatically
+    return {"remaining_budget": remaining}
+
 def normalize_date(user_input: str):
     current_year = datetime.now().year
     # Added more common formats for better extraction
@@ -103,15 +117,12 @@ def budget_warning_node(state: TravelState):
     logger.warning(f"--- ⚠️ OVER BUDGET: ${abs(state.get('remaining_budget', 0))} ---")
     return {}
 
-import uuid
-
-def booking_node(state: TravelState):
-    # Generate a professional reference ID
-    # Use this ID later to retrieve state: graph.get_state({"configurable": {"thread_id": ref}})
-    ref_id = f"TRV-{uuid.uuid4().hex[:6].upper()}"
     
+def booking_node(state: TravelState):
+    import uuid
+    # Generate the professional reference ID
+    ref_id = f"TRV-{uuid.uuid4().hex[:6].upper()}"
     return {
         "booking_reference": ref_id,
-        "is_booked": True,
-        "remaining_budget": state["remaining_budget"] # Final math check
+        "is_booked": True
     }

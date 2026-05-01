@@ -15,6 +15,9 @@ class TravelState(TypedDict):
     remaining_budget: float    # total - (flight + hotel)
     selected_flight_price: Optional[float]
     selected_hotel_price: Optional[float]
+    remaining_budget: float  # <--- Ensure this is here
+    booking_reference: str
+    is_booked: bool
     
     # Result Lists
     flight_options: List[dict]
