@@ -42,12 +42,18 @@ async def parse_user_request(text: str):
     Return ONLY a JSON object with:
     - origin (string or "unknown")
     - destination (string or "unknown")
-    - travel_date_formatted (ISO format YYYY-MM-DD)
-    - total_budget (number or null)
+    - travel_date_formatted (ISO format YYYY-MM-DD EXACTLY as mentioned by user)
+    - If year is missing, return "unknown"
+    - NEVER infer year, month, or day
+    - NEVER use current date
+    - NEVER normalize or convert relative dates like "July 15th"
     
     Rules:
     - If missing, return "unknown"
     - Do NOT assume today's date
+    IMPORTANT:
+    If user says "July 15th", you must return:
+    "unknown" unless year is explicitly provided.
     """
 
     try:
