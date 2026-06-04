@@ -1,0 +1,6 @@
+neo4j 
+langchain-neo4j 
+langchain-openai 
+fastapi
+uvicorn
+chainlit
